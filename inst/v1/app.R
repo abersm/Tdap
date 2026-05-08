@@ -448,10 +448,10 @@ server <- function(input, output, session) {
   plot_efficacy <- metaAnalysisServer2("efficacy", data = efficacy)
 
   # Safety tab - infant
-  plot_safety_infant <- metaAnalysisServer2("safety_infant", data = safety)
+  plot_safety_infant <- metaAnalysisServer2("safety_infant", data = safety_infant)
 
   # Safety tab - maternal
-  plot_safety_maternal <- metaAnalysisServer2("safety_maternal", data = safety)
+  plot_safety_maternal <- metaAnalysisServer2("safety_maternal", data = safety_maternal)
 
   # Immmunogenicity tab
   plot_immunogenicity <- metaAnalysisServer2("immunogenicity", data = safety, estimate_title = "Ratio GMT (95% CI)", x_axis_title = "Ratio GMT (vaccinated/unvaccinated)")
