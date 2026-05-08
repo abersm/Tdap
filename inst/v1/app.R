@@ -454,7 +454,7 @@ server <- function(input, output, session) {
   plot_safety_maternal <- metaAnalysisServer2("safety_maternal", data = safety_maternal)
 
   # Immmunogenicity tab
-  plot_immunogenicity <- metaAnalysisServer2("immunogenicity", data = safety, estimate_title = "Ratio GMT (95% CI)", x_axis_title = "Ratio GMT (vaccinated/unvaccinated)")
+  plot_immunogenicity <- metaAnalysisServer2("immunogenicity", data = immunogenicity, estimate_title = "Ratio GMT (95% CI)", x_axis_title = "Ratio GMT (vaccinated/unvaccinated)")
 }
 
 shiny::shinyApp(ui, server, enableBookmarking = "url")
