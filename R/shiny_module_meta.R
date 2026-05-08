@@ -530,7 +530,8 @@ metaAnalysisServer2 <- function(
     estimate_title = NULL,
     x_axis_title = "Risk ratio",
     plotly_toolbar_buttons = "toImage",
-    id_export_plot_btn = "export_plot_btn") {
+    id_export_plot_btn = "export_plot_btn",
+    direction_labels = c("Favors\nvaccination", "Favors\ncontrol")) {
   if (!is.data.frame(data)) {
     stop("data must be a data frame", call. = FALSE)
   }
@@ -601,7 +602,7 @@ metaAnalysisServer2 <- function(
             base_size = input$base_size,
             estimate_title = estimate_title
           )
-          add_forest_direction_annotation(fp)
+          add_forest_direction_annotation(fp, labels = direction_labels)
         }, error = function(e) plot_meta_toc)
       } else {
         plot_meta_toc

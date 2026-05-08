@@ -13,6 +13,9 @@ tryElse <- function(x, otherwise = NULL) tryCatch(suppressWarnings(x), error = f
 # Upload data
 data_studies <- utils::read.csv(system.file("v1", "df_shiny.csv", package = "Tdap"))
 rownames(data_studies) <- NULL
+data_studies$i_sq <- round_up(data_studies$i_sq*100)
+data_studies$tau_sq <- as.character(round_up(data_studies$tau_sq, 3))
+data_studies$p <- gsub("<", "< ", data_studies$p, fixed = TRUE)
 
 # Create clickable link to article
 #idx <- data_studies$is_meta == 0
@@ -454,7 +457,7 @@ server <- function(input, output, session) {
   plot_safety_maternal <- metaAnalysisServer2("safety_maternal", data = safety_maternal)
 
   # Immmunogenicity tab
-  plot_immunogenicity <- metaAnalysisServer2("immunogenicity", data = immunogenicity, estimate_title = "Ratio GMT (95% CI)", x_axis_title = "Ratio GMT (vaccinated/unvaccinated)")
+  plot_immunogenicity <- metaAnalysisServer2("immunogenicity", data = immunogenicity, estimate_title = "Ratio GMT (95% CI)", x_axis_title = "Ratio GMT (vaccinated/unvaccinated)", direction_labels = rev(c("Favors\nvaccination", "Favors\ncontrol")))
 }
 
 shiny::shinyApp(ui, server, enableBookmarking = "url")
