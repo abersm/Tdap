@@ -17,7 +17,8 @@ plot_rr <- function(
     point_size = 5,
     point_border_thickness = 1,
     point_border_color = "black",
-    vert_line_x_position = 1) {
+    vert_line_x_position = 1,
+    estimate_title = NULL) {
   n <- nrow(x) + 1L
   if (missing(ratio)) {
     ratio <- 0.09*n + 0.56
@@ -53,7 +54,6 @@ plot_rr <- function(
     ordering_var = ordering_var,
     base_size = base_size,
     point_size = point_size,
-    estimate_title = NULL,
     ...
   )
   out <- out + ggplot2::ggtitle(title)

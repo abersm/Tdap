@@ -527,6 +527,8 @@ metaAnalysisUI2 <- function(
 metaAnalysisServer2 <- function(
     id,
     data,
+    estimate_title = NULL,
+    x_axis_title = "Risk ratio",
     plotly_toolbar_buttons = "toImage",
     id_export_plot_btn = "export_plot_btn") {
   if (!is.data.frame(data)) {
@@ -595,7 +597,9 @@ metaAnalysisServer2 <- function(
             x_axis_breaks = x_breaks,
             x_axis_labels = identity,
             #aspect_ratio = input$aspect_ratio %#% NULL,
-            base_size = input$base_size
+            x_axis_title = x_axis_title,
+            base_size = input$base_size,
+            estimate_title = estimate_title
           )
           add_forest_direction_annotation(fp)
         }, error = function(e) plot_meta_toc)

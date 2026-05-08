@@ -15,17 +15,17 @@ data_studies <- utils::read.csv(system.file("v1", "df_shiny.csv", package = "Tda
 rownames(data_studies) <- NULL
 
 # Create clickable link to article
-idx <- data_studies$is_meta == 0
-data_studies$article <- NA_character_
-data_studies$article[idx] <- paste0('<a href="', data_studies$link[idx], '" target="_blank">', data_studies$study[idx], "</a>")
-data_studies$article[!idx] <- "Pooled"
-remove(idx)
+#idx <- data_studies$is_meta == 0
+#data_studies$article <- NA_character_
+#data_studies$article[idx] <- paste0('<a href="', data_studies$link[idx], '" target="_blank">', #data_studies$study[idx], "</a>")
+#data_studies$article[!idx] <- "Pooled"
+#remove(idx)
 
-# Efficacy data
-efficacy <- data_studies[data_studies$domain == "Efficacy", , drop = FALSE]
-
-# Safety data
-safety <- data_studies[data_studies$domain == "Safety", , drop = FALSE]
+# Data
+efficacy <- data_studies[data_studies$domain == "Effectiveness", , drop = FALSE]
+safety_infant <- data_studies[data_studies$domain == "Safety - infant", , drop = FALSE]
+safety_maternal <- data_studies[data_studies$domain == "Safety - maternal", , drop = FALSE]
+immunogenicity <- data_studies[data_studies$domain == "Immunogenicity", , drop = FALSE]
 
 # Style --------------------------------------------------------------------
 primary_color <- "#246A87"
@@ -201,7 +201,7 @@ js_popover <- shiny::tags$head(
 
 # Header
 cidrap_logo <- shiny::tags$img(src = "cidrap_logo.svg", height = "75px", style = "padding-top:10px;padding-bottom:10px;")
-vip_text <- shiny::tags$h1("Human Papillomavirus Vaccination", style = sprintf("color:%s;vertical-align:middle;padding-top:10px;padding-bottom:10px;font-size:30px;", "#85031A"))
+vip_text <- shiny::tags$h1("Tdap Vaccination", style = sprintf("color:%s;vertical-align:middle;padding-top:10px;padding-bottom:10px;font-size:30px;", "#85031A"))
 vip_logo <- shiny::tags$img(src = "vip_logo_no_bg.png", height = "100px", style = "padding-top:10px;padding-bottom:10px;max-width:100%;height:auto;")
 #vip_logo <- shiny::tags$img(src = "vip_logo.jpg", height = "70px", style = "padding-top:10px;padding-bottom:10px;")
 #vip_logo <- shiny::tags$img(src = "vip_logo_white_bg.svg", height = "100px", style = "padding-top:10px;padding-bottom:10px;")
@@ -228,6 +228,7 @@ reset_btn <- shiny::tags$button(
 )
 reset_btn <- shiny::tagList(shiny::tagAppendAttributes(reset_btn, title = shiny::HTML("Reset data"), `data-bs-toggle` = "tooltip", `data-bs-html` = "true", `data-bs-placement` = "auto"))
 
+# Study design options
 design_options <- HPV::popover_btn(
   icon = shiny::icon("magnifying-glass"),
   title = "Select study design",
@@ -235,7 +236,33 @@ design_options <- HPV::popover_btn(
   shiny::selectInput(
     inputId = "study_design",
     label = NULL,
-    choices = c("RCT", "Cohort", "Cross-sectional", "Self-controlled case series")
+    choices = c("RCT", "Observational (unadjusted)", "Observational (adjusted)")
+  )
+)
+
+# Antibody options
+ab_options <- c("Anti-pertussis toxin", "Anti-pertactin", "Anti-fimbriae", "Anti-filamentous hemagglutinin")
+names(ab_options) <- c("Pertussin toxin", "Pertactin", "Fimbriae", "Filamentous hemagglutinin")
+ab_options <- HPV::popover_btn(
+  icon = shiny::icon("magnifying-glass"),
+  title = "Antibody target",
+  hover_text = "Antigen targeted by host antibody",
+  shiny::selectInput(
+    inputId = "antibody",
+    label = NULL,
+    choices = ab_options
+  )
+)
+
+# Population options
+pop_options <- HPV::popover_btn(
+  icon = shiny::icon("magnifying-glass"),
+  title = "Population",
+  hover_text = "Patient population",
+  shiny::selectInput(
+    inputId = "population",
+    label = NULL,
+    choices = c("Infant", "Maternal")
   )
 )
 
@@ -244,10 +271,8 @@ plot_btns <- shiny::div(
   class = "btn-group btn-group",
   role = "group",
   style = "gap:2px;float:right;",
-  #vax_options,
-  #population_options,
+  pop_options,
   design_options
-  #rob_options
 )
 plot_btns <- shiny::div(
   class = "btn-toolbar justify-content-between",
@@ -323,12 +348,28 @@ ui <- function(request) {
         metaAnalysisUI2("efficacy", data = efficacy)
       ),
 
-      # Safety tab
+      # Safety infant tab
       shiny::tabPanel(
-        title = "Vaccine safety",
+        title = "Safety - infant",
         icon = shiny::icon("warning"),
         style = tab_style,
-        metaAnalysisUI2("safety", data = safety)
+        metaAnalysisUI2("safety_infant", data = safety_infant)
+      ),
+
+      # Safety maternal tab
+      shiny::tabPanel(
+        title = "Safety - maternal",
+        icon = shiny::icon("warning"),
+        style = tab_style,
+        metaAnalysisUI2("safety_maternal", data = safety_maternal)
+      ),
+
+      # Immunogenicity tab
+      shiny::tabPanel(
+        title = "Immunogenicity",
+        icon = shiny::icon("virus"),
+        style = tab_style,
+        metaAnalysisUI2("immunogenicity", data = immunogenicity)
       ),
 
       # Studies tab -------------------------------------------------------------
@@ -406,8 +447,14 @@ server <- function(input, output, session) {
   # Efficacy tab
   plot_efficacy <- metaAnalysisServer2("efficacy", data = efficacy)
 
-  # Safety tab
-  plot_safety <- metaAnalysisServer2("safety", data = safety)
+  # Safety tab - infant
+  plot_safety_infant <- metaAnalysisServer2("safety_infant", data = safety)
+
+  # Safety tab - maternal
+  plot_safety_maternal <- metaAnalysisServer2("safety_maternal", data = safety)
+
+  # Immmunogenicity tab
+  plot_immunogenicity <- metaAnalysisServer2("immunogenicity", data = safety, estimate_title = "Ratio GMT (95% CI)", x_axis_title = "Ratio GMT (vaccinated/unvaccinated)")
 }
 
 shiny::shinyApp(ui, server, enableBookmarking = "url")
