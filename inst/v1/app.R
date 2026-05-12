@@ -401,7 +401,6 @@ server <- function(input, output, session) {
     #tmp <- tmp[unique(c("study", names(tmp)))]
     # Next line is new as of 5/4/26 (and line above removed)
     tmp <- tmp[unique(intersect(c("article", names(tmp)), names(tmp)))]
-    #names(tmp)[names(tmp) == "rob"] <- "Risk of bias"
     out <- DT::datatable(
       tmp,
       escape = FALSE,

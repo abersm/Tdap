@@ -40,6 +40,9 @@ meta <- meta %>%
     se_unvax = se.c
   )
 
+# Correct UTF8 issue
+meta$study[meta$link == "10.1093/ofid/ofad325"] <- "Juscamayta-Lopez 2023"
+
 # Add meta data to pooled columns
 g <- meta %>%
   filter(study != "Pooled") %>%
