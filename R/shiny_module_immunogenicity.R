@@ -497,13 +497,21 @@ metaAnalysisUI3 <- function(
       font_size_ui
     ),
     #abers::debug_editorUI(id = ns("debug")),
-    shiny::selectInput(
-      width = "300px",
-      inputId = ns("antigen"),
-      label = "Select antibody target",
-      choices = ag_options
+    shiny::fluidRow(
+      shiny::column(
+        width = 6,
+        shiny::selectInput(
+          width = "300px",
+          inputId = ns("antigen"),
+          label = "Select antibody target",
+          choices = ag_options
+        )
+      ),
+      shiny::column(
+        width = 6,
+        shiny::uiOutput(ns("meta_options"))
+      )
     ),
-    shiny::uiOutput(ns("meta_options")),
     plot_card(
       plot_output,
       shiny::conditionalPanel(
