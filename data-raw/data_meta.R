@@ -9,13 +9,16 @@
 # study_design: levels include RCT, Observational, Observational (adjusted)
 
 # Upload raw data
-meta <- read_csv("/Users/michaelabers/Desktop/R packages/Tdap/data-raw/tdap_all_meta_forest.csv") %>%
+meta <- "/Users/michaelabers/Desktop/R packages/Tdap/data-raw/tdap_all_meta_forest_UPDATED with DOI.csv"
+#meta <- "/Users/michaelabers/Desktop/R packages/Tdap/data-raw/tdap_all_meta_forest.csv"
+meta <- read_csv(meta) %>%
   select(-c(rob, study, type, type_long, follow_up, n_vax_outcome, n_vax_no_outcome, n_unvax_outcome, n_unvax_no_outcome, forest_plot_title, outcome))
 names(meta) <- tolower(names(meta))
 meta <- meta %>%
   rename(
     study_id = id,
     id_meta = forest_plot_id,
+    link = pmid,
     #analysis_label = forest_plot_title,
     outcome = outcome_asis,
     study = study_label,
@@ -154,27 +157,15 @@ meta$row_order <- NULL
 remove(order_studies)
 
 # Add links
-if (FALSE) {
-  #source("~/Desktop/Statistics/R/Statistics/PubMed/convert_pmid_doi.R")
-  meta <- meta %>%
-    mutate(
-      #pmcid = ifelse(grepl("^PMC", pmid_or_doi), pmid_or_doi, NA_character_),
-      pmid = ifelse(!grepl("[A-z]", pmid_or_doi), pmid_or_doi, NA_character_),
-      link = case_when(
-        !is.na(pmcid) ~ paste0("https://pmc.ncbi.nlm.nih.gov/articles/", pmcid),
-        !is.na(pmid) ~ paste0("https://pubmed.ncbi.nlm.nih.gov/", pmid),
-        !is.na(doi) & !grepl("https://doi.org/", doi, fixed = TRUE) ~ paste0("https://doi.org/", doi),
-        !is.na(doi) ~ doi,
-        .default = pmid_or_doi
-      )
-    )
-}
+meta$link[!grepl("^10", meta$link)] <- ""
+meta$link[grepl("^10", meta$link)] <- paste0("https://doi.org/", meta$link[grepl("^10", meta$link)])
 
 # Reorder columns
 meta <- meta %>%
   select(
     id_meta, domain, analysis_label,
     study,
+    link,
     is_meta, is_rct, study_design,
     outcome, population,
     rr, rr_lower, rr_upper,
