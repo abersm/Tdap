@@ -694,14 +694,7 @@ metaAnalysisServer2 <- function(
         paste0(base_name, ".", input$export_data_filetype)
       },
       content = function(file) {
-        out <- prepare_meta_analysis_data(
-          data,
-          study_design = input$study_design,
-          age_at_vax = input$age_at_vax,
-          hpv_type = input$hpv_type,
-          outcome = input$outcome,
-          follow_up = input$follow_up
-        )
+        out <- data
         if (input$export_data_filetype == "csv") {
           utils::write.csv(out, file, row.names = FALSE)
         } else {
