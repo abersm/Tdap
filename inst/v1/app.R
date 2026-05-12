@@ -372,7 +372,7 @@ ui <- function(request) {
         title = "Immunogenicity",
         icon = shiny::icon("virus"),
         style = tab_style,
-        metaAnalysisUI2("immunogenicity", data = immunogenicity)
+        metaAnalysisUI3("immunogenicity", data = immunogenicity)
       ),
 
       # Studies tab -------------------------------------------------------------
