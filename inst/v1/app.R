@@ -18,11 +18,11 @@ data_studies$tau_sq <- as.character(round_up(data_studies$tau_sq, 3))
 data_studies$p <- gsub("<", "< ", data_studies$p, fixed = TRUE)
 
 # Create clickable link to article
-#idx <- data_studies$is_meta == 0
-#data_studies$article <- NA_character_
-#data_studies$article[idx] <- paste0('<a href="', data_studies$link[idx], '" target="_blank">', #data_studies$study[idx], "</a>")
-#data_studies$article[!idx] <- "Pooled"
-#remove(idx)
+idx <- data_studies$link != ""
+data_studies$article <- NA_character_
+data_studies$article[idx] <- paste0('<a href="', data_studies$link[idx], '" target="_blank">', data_studies$study[idx], "</a>")
+data_studies$article[!idx] <- data_studies$study[!idx]
+remove(idx)
 
 # Data
 efficacy <- data_studies[data_studies$domain == "Effectiveness", , drop = FALSE]
