@@ -400,6 +400,7 @@ server <- function(input, output, session) {
     tmp <- table_data()
     #tmp <- tmp[unique(c("study", names(tmp)))]
     # Next line is new as of 5/4/26 (and line above removed)
+    tmp$id_meta <- tmp$is_meta <- tmp$is_rct <- NULL
     tmp <- tmp[unique(intersect(c("article", names(tmp)), names(tmp)))]
     out <- DT::datatable(
       tmp,
@@ -456,7 +457,7 @@ server <- function(input, output, session) {
   plot_safety_maternal <- metaAnalysisServer2("safety_maternal", data = safety_maternal)
 
   # Immmunogenicity tab
-  plot_immunogenicity <- metaAnalysisServer2("immunogenicity", data = immunogenicity, estimate_title = "Ratio GMT (95% CI)", x_axis_title = "Ratio GMT\n(vaccinated/unvaccinated)", direction_labels = rev(c("Favors\nvaccination", "Favors\ncontrol")))
+  plot_immunogenicity <- metaAnalysisServer3("immunogenicity", data = immunogenicity, estimate_title = "Ratio GMT (95% CI)", x_axis_title = "Ratio GMT\n(vaccinated/unvaccinated)", direction_labels = rev(c("Favors\nvaccination", "Favors\ncontrol")))
 }
 
 shiny::shinyApp(ui, server, enableBookmarking = "url")
